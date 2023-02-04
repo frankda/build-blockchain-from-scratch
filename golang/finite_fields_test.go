@@ -107,3 +107,129 @@ func TestAdd(t *testing.T) {
 		}
 	}
 }
+
+func TestSub(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		f      *FieldElementStruct
+		other  *FieldElementStruct
+		result *FieldElementStruct
+		err    error
+	}{
+		{
+			f:      &FieldElementStruct{Num: 29, Prime: 31},
+			other:  &FieldElementStruct{Num: 4, Prime: 31},
+			result: &FieldElementStruct{Num: 25, Prime: 31},
+			err:    nil,
+		},
+		{
+			f:      &FieldElementStruct{Num: 15, Prime: 31},
+			other:  &FieldElementStruct{Num: 30, Prime: 31},
+			result: &FieldElementStruct{Num: 16, Prime: 31},
+			err:    nil,
+		},
+	}
+
+	// Iterate over test cases and compare expected results with actual results
+	for _, tt := range testCases {
+		result, err := tt.f.Sub(tt.other)
+		if tt.err != nil && err == nil {
+			t.Errorf("Unexpected error: got %v, want %v", err, tt.err)
+		}
+		if result == nil && tt.result != nil || result != nil && tt.result == nil {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		} else if result != nil && tt.result != nil && (*result != *tt.result) {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		}
+	}
+}
+
+func TestMul(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		f      *FieldElementStruct
+		other  *FieldElementStruct
+		result *FieldElementStruct
+		err    error
+	}{
+		{
+			f:      &FieldElementStruct{Num: 24, Prime: 31},
+			other:  &FieldElementStruct{Num: 19, Prime: 31},
+			result: &FieldElementStruct{Num: 22, Prime: 31},
+			err:    nil,
+		},
+	}
+
+	// Iterate over test cases and compare expected results with actual results
+	for _, tt := range testCases {
+		result, err := tt.f.Mul(tt.other)
+		if tt.err != nil && err == nil {
+			t.Errorf("Unexpected error: got %v, want %v", err, tt.err)
+		}
+		if result == nil && tt.result != nil || result != nil && tt.result == nil {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		} else if result != nil && tt.result != nil && (*result != *tt.result) {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		}
+	}
+}
+
+func TestPow(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		f      *FieldElementStruct
+		other  int
+		result *FieldElementStruct
+		err    error
+	}{
+		{
+			f:      &FieldElementStruct{Num: 17, Prime: 31},
+			other:  3,
+			result: &FieldElementStruct{Num: 15, Prime: 31},
+			err:    nil,
+		},
+	}
+
+	// Iterate over test cases and compare expected results with actual results
+	for _, tt := range testCases {
+		result, err := tt.f.Pow(tt.other)
+		if tt.err != nil && err == nil {
+			t.Errorf("Unexpected error: got %v, want %v", err, tt.err)
+		}
+		if result == nil && tt.result != nil || result != nil && tt.result == nil {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		} else if result != nil && tt.result != nil && (*result != *tt.result) {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		}
+	}
+}
+
+func TestDiv(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		f      *FieldElementStruct
+		other  *FieldElementStruct
+		result *FieldElementStruct
+		err    error
+	}{
+		{
+			f:      &FieldElementStruct{Num: 3, Prime: 31},
+			other:  &FieldElementStruct{Num: 24, Prime: 31},
+			result: &FieldElementStruct{Num: 4, Prime: 31},
+			err:    nil,
+		},
+	}
+
+	// Iterate over test cases and compare expected results with actual results
+	for _, tt := range testCases {
+		result, err := tt.f.Mul(tt.other)
+		if tt.err != nil && err == nil {
+			t.Errorf("Unexpected error: got %v, want %v", err, tt.err)
+		}
+		if result == nil && tt.result != nil || result != nil && tt.result == nil {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		} else if result != nil && tt.result != nil && (*result != *tt.result) {
+			t.Errorf("Unexpected result: got %v, want %v", result, tt.result)
+		}
+	}
+}
