@@ -38,20 +38,23 @@ class FieldElement:
         raise TypeError('Cannot multiply two numbers in different Fields')
     num = (self.num * other.num) % self.prime
     return self.__class__(num, self.prime)
+  
+  def __rmul__(self, coefficient):
+    num = (self.num * coefficient) % self.prime
+    return self.__class__(num=num, prime=self.prime)
 
   def __pow__(self, exponent):
-      n = exponent % (self.prime - 1)
-      num = pow(self.num, n, self.prime)
-      return self.__class__(num, self.prime)
+    n = exponent % (self.prime - 1)
+    num = pow(self.num, n, self.prime)
+    return self.__class__(num, self.prime)
 
   def __truediv__(self, other):
-      if self.prime != other.prime:
-          raise TypeError('Cannot divide two numbers in different Fields')
+    if self.prime != other.prime:
+      raise TypeError('Cannot divide two numbers in different Fields')
 
-      num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
-      return self.__class__(num, self.prime)
-  
+    num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
+    return self.__class__(num, self.prime)
+
 a = FieldElement(2, 31)
 b = FieldElement(2, 31)
 c = FieldElement(15, 31)
-print(c-b)
