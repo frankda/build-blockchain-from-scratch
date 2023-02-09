@@ -61,10 +61,8 @@ class Point:
       current = self
       result = self.__class__(None, None, self.a, self.b)
       while coef:
-          print(coef)
           if coef & 1:
               result += current
           current += current
           coef >>= 1
-          print(coef)
       return result
