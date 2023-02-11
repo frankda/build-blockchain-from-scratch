@@ -27,6 +27,7 @@ class S256Point(Point):
     coef = coefficient % N
     return super().__rmul__(coefficient)
 
+  # z is fingerprint derived from secret, used to create signature
   def verify(self, z, sig):
     s_inv = pow(sig.s, N - 2, N)  # Fermat’s little theorem
     u = z * s_inv % N
