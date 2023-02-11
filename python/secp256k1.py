@@ -1,3 +1,4 @@
+from random import randint
 from finite_fields import FieldElement
 from signature import Signature
 from point import Point
@@ -34,6 +35,25 @@ class S256Point(Point):
     v = sig.r * s_inv % N
     total = u * G + v * self  # uG + vP = R
     return total.x.num == sig.r
+
+class PrivateKey:
+  def __init__(self, secret):
+    self.secret = secret
+    self.point = secret * G
+  
+  def hex(self):
+    return '{:x}'.format(self.secret).zfill(64)
+
+  def sign(self, z):
+    # Don't use this random in production because it's not random enough
+    # use RFC6979 instead
+    k = randint(0, N)
+    r = (k * G).x.num
+    k_inv = pow(k, N - 2, N)
+    s = (z + r * self.secret) * k_inv % N
+    if s > N/2:
+      s = N - s
+      return Signature(r, s)
 
 G = S256Point(
     0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
