@@ -15,6 +15,8 @@ class S256Field(FieldElement):
   def __repr__(self):
     return '{:x}'.format(self.num).zfill(64)
   
+  def sqrt(self):
+    return self**((P + 1) // 4)
 
 class S256Point(Point):
   def __init__(self, x, y, a=None, b=None):
@@ -35,6 +37,16 @@ class S256Point(Point):
     v = sig.r * s_inv % N
     total = u * G + v * self  # uG + vP = R
     return total.x.num == sig.r
+
+  def sec(self, compressed=True):
+    '''return sthe binay version of the SEC format'''
+    if compressed:
+      if self.y.num % 2 == 0:
+        return b'\x02' + self.x.num.to_bytes(32, 'big')
+      else:
+        return b'\x03' + self.x.num.to_bytes(32, 'big')
+    else:
+      return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
 
 class PrivateKey:
   def __init__(self, secret):

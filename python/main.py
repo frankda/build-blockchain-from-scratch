@@ -1,5 +1,5 @@
 from finite_fields import FieldElement
-from secp256k1 import S256Point
+from secp256k1 import S256Point, PrivateKey
 from point import Point
 
 prime = 2**256 - 2**32 - 977
@@ -11,9 +11,22 @@ x = FieldElement(px, prime)
 y = FieldElement(py, prime)
 n = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
-G = Point(x, y, a, b)
-
-G2 = S256Point(x, y)
+G = S256Point(x, y)
+G2 = Point(x, y, a, b)
 G3 = S256Point(px, py)
 
-print(n*G3)
+# secrets
+s1 = 5000
+s2 = 2018**5
+s3 = 0xdeadbeef12345
+
+# corresponding public key
+p1 = PrivateKey(s1)
+p2 = PrivateKey(s2)
+p3 = PrivateKey(s3)
+
+print(p1.point.sec().hex())
+print()
+print(p2.point.sec().hex())
+print()
+print(p3.point.sec().hex())
