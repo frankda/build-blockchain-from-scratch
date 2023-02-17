@@ -2,6 +2,7 @@ from random import randint
 from finite_fields import FieldElement
 from signature import Signature
 from point import Point
+from serialization import hash160, encode_base58_checksum
 
 P = 2**256 - 2**32 - 977  # prime
 A = 0
@@ -47,6 +48,18 @@ class S256Point(Point):
         return b'\x03' + self.x.num.to_bytes(32, 'big')
     else:
       return b'\x04' + self.x.num.to_bytes(32, 'big') + self.y.num.to_bytes(32, 'big')
+  
+  def hash160(self, compressed=True):
+    return hash160(self.sec(compressed))
+
+  def address(self, compressed=True, testnet=False):
+    '''returns the address string'''
+    h160 = self.hash160(compressed)
+    if testnet:
+      prefix = b'\x6f'
+    else:
+      prefix = b'\x00'
+    return encode_base58_checksum(prefix + h160)
   
   @classmethod
   def parse(self, sec_bin):
@@ -96,3 +109,5 @@ class PrivateKey:
 G = S256Point(
     0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
     0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
+
+
