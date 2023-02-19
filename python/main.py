@@ -18,8 +18,8 @@ G2 = Point(x, y, a, b)
 G3 = S256Point(px, py)
 
 # secrets
-s1 = 5002
-s2 = 2020**5
+s1 = 5003
+s2 = 2021**5
 s3 = 0x12345deadbeef
 
 
@@ -47,6 +47,10 @@ h1 = '7c076ff316692a3d7eb3c3bb0f8b1488cf72e1afcd929e29307032997a838a3d'
 # print(endoe_base58(bytes.fromhex(h1)))
 
 # find addresss for above private keys
-print(p1.point.address(compressed=False, testnet=True))
-print(p2.point.address(compressed=True, testnet=True))
-print(p3.point.address(compressed=True, testnet=False))
+# print(p1.point.address(compressed=False, testnet=True))
+# print(p2.point.address(compressed=True, testnet=True))
+# print(p3.point.address(compressed=True, testnet=False))
+
+# find WIF for private key
+print(p1.wif(compressed=True, testnet=True))
+print(p2.wif(compressed=False, testnet=True))
