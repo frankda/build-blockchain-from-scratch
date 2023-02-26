@@ -1,4 +1,6 @@
+from python.helper import read_varint
 from python.serialization import hash256
+from helper import little_endian_to_int, int_to_little_endian
 
 
 class Tx:
@@ -35,5 +37,35 @@ class Tx:
         return hash256(self.serialize())[::-1]
 
     @classmethod
-    def parse(cls, stream):
+    def parse(cls, stream, testnet=False):
         serialized_version = stream.read(4)
+        version = little_endian_to_int(serialized_version)
+        num_inputs = read_varint(stream)
+        inputs = []
+        for _ in range(num_inputs):
+            inputs.append(TxIn.parse(stream))
+        return cls(version, None, None, None, testnet=testnet)
+    
+class TxIn:
+    def __init__(self, prev_tx, prev_index, script_sig=None, sequence=0xffffffff):
+        self.prev_tx = prev_tx
+        self.prev_index = prev_index
+        if script_sig is None:
+            script_sig = Script()
+        else:
+            self.script_sig = script_sig
+        self.sequence = sequence
+    
+    def __repr__(self):
+        return '{}:{}'.format(self.prev_tx.hex(), self.prev_index)
+    
+    @classmethod
+    def parse(cls, stream):
+        '''Takes a byte stream and parses the tx_ins at the start.
+        Returns a TxIn object
+        '''
+        prev_tx = stream.read(32)[::-1]
+        prev_index = little_endian_to_int(stream.read(4))
+        script_sig = Script.parse(stream)
+        sequence = little_endian_to_int(stream.read(4))
+        return cls(prev_tx, prev_index, script_sig, sequence)
