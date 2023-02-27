@@ -69,3 +69,20 @@ class TxIn:
         script_sig = Script.parse(stream)
         sequence = little_endian_to_int(stream.read(4))
         return cls(prev_tx, prev_index, script_sig, sequence)
+
+class TxOut:
+    def __init__(self, amount, script_pubkey):
+        self.amount = amount
+        self.script_pubkey = script_pubkey
+    
+    def __repr__(self):
+        return '{}:{}'.format(self.amount, self.script_pubkey)
+    
+    @classmethod
+    def parse(cls, stream):
+        '''Takes a byte stream and parses the tx_outs at the start.
+        Returns a TxOut object
+        '''
+        amount = little_endian_to_int(stream.read(8))
+        script_pubkey = Script.parse(stream)
+        return cls(amount, script_pubkey)
