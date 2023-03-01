@@ -44,6 +44,11 @@ class Tx:
         inputs = []
         for _ in range(num_inputs):
             inputs.append(TxIn.parse(stream))
+        num_outputs = read_varint(stream)
+        outputs = []
+        for _ in range(num_outputs):
+            outputs.append(TxOut.parse(stream))
+        locktime = little_endian_to_int(stream.read(4))
         return cls(version, None, None, None, testnet=testnet)
     
 class TxIn:
