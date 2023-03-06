@@ -1,5 +1,13 @@
 from python.helper import int_to_little_endian, little_endian_to_int, read_varint
 from python.serialization import hash160, hash256
+from logging import getLogger
+from op import (
+    OP_CODE_FUNCTIONS,
+    OP_CODE_NAMES,
+)
+
+
+LOGGER = getLogger(__name__)
 
 def op_dup(stack):
     if len(stack) < 1:
@@ -56,6 +64,41 @@ class Script:
                     raise ValueError('too long')
                 result += cmd
         return result
+    
+    def evaluate(self, z):
+        cmds = self.cmds[:]
+        stack = []
+        altstack = []
+        while len(cmds) > 0:
+            cmd = cmds.pop(0)
+            if type(cmd) == int:
+                operation = OP_CODE_FUNCTIONS[cmd]
+                if cmd in (99, 100):  # <4>
+                    if not operation(stack, cmds):
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
+                        return False
+                elif cmd in (107, 108):  # <5>
+                    if not operation(stack, altstack):
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
+                        return False
+                elif cmd in (172, 173, 174, 175):  # <6>
+                    if not operation(stack, z):
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
+                        return False
+                else:
+                    if not operation(stack):
+                        LOGGER.info('bad op: {}'.format(OP_CODE_NAMES[cmd]))
+                        return False
+            
+            else:
+                stack.append(cmd)
+        
+        if len(stack) == 0:
+            return False
+        if stack.pop() == b'':
+            return False
+        return True
+
 
     @classmethod
     def parse(cls, stream):
