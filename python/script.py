@@ -1,5 +1,5 @@
-from python.helper import int_to_little_endian, little_endian_to_int, read_varint
-from python.serialization import hash160, hash256
+from helper import int_to_little_endian, little_endian_to_int, read_varint
+from serialization import hash160, hash256
 from logging import getLogger
 from op import (
     OP_CODE_FUNCTIONS,
@@ -28,12 +28,6 @@ def op_hash256(stack):
     element = stack.pop()
     stack.append(hash256(element))
     return True
-
-OP_CODE_FUNCTIONS = {
-    76: op_hash160,
-    170: op_hash256,
-    118: op_dup,
-}
 
 class Script:
     def __init__(self, cmds=None):

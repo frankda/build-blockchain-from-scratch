@@ -2,11 +2,11 @@ import hashlib
 
 from unittest import TestCase
 
-from helper import (
+from serialization import (
     hash160,
     hash256,
 )
-from python.secp256k1 import S256Point
+from secp256k1 import S256Point
 from signature import Signature
 
 
