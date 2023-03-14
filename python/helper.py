@@ -1,3 +1,5 @@
+SIGHASH_ALL = 1
+
 def little_endian_to_int(b):
     return int.from_bytes(b, 'little')
 
@@ -32,3 +34,4 @@ def encode_varint(i):
         return b'\xff' + int_to_little_endian(i, 8)
     else:
         raise RuntimeError('integer too large: {}'.format(i))
+    

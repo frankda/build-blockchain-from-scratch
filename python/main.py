@@ -1,4 +1,6 @@
+from io import BytesIO
 from finite_fields import FieldElement
+from transaction import Tx
 from secp256k1 import S256Point, PrivateKey
 from point import Point
 from signature import Signature
@@ -79,6 +81,7 @@ print(combined_script.evaluate(0))
 '''
 
 # --------
+'''
 script_pubkey = Script([0x6e, 0x87, 0x91, 0x69, 0xa7, 0x7c, 0xa7, 0x87])
 c1 = '255044462d312e330a25e2e3cfd30a0a0a312030206f626a0a3c3c2f576964746820\
 32203020522f4865696768742033203020522f547970652034203020522f537562747970652035\
@@ -105,3 +108,10 @@ collision2 = bytes.fromhex(c2)
 script_sig = Script([collision1, collision2])
 combined_script = script_sig + script_pubkey
 print(combined_script.evaluate(0))
+'''
+
+# --------
+raw_tx = ('0100000001813f79011acb80925dfe69b3def355fe914bd1d96a3f5f71bf830\ 3c6a989c7d1000000006b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccf\ cf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8\ e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278\ afeffffff02a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88a\ c99c39800000000001976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac19430600')
+stream = BytesIO(bytes.fromhex(raw_tx))
+transaction = Tx.parse(stream)
+print(transaction.fee() >= 0)
