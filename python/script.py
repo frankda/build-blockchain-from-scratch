@@ -1,4 +1,4 @@
-from helper import int_to_little_endian, little_endian_to_int, read_varint
+from helper import int_to_little_endian, little_endian_to_int, read_varint, encode_varint
 from serialization import hash160, hash256
 from logging import getLogger
 from op import (
@@ -32,12 +32,25 @@ def op_hash256(stack):
 class Script:
     def __init__(self, cmds=None):
         if cmds is None:
-            cmds = []
+            self.cmds = []
         else:
             self.cmds = cmds
 
     def __add__(self, other):
         return Script(self.cmds + other.cmds)
+    
+    def __repr__(self):
+        result = []
+        for cmd in self.cmds:
+            if type(cmd) == int:
+                if OP_CODE_NAMES.get(cmd):
+                    name = OP_CODE_NAMES.get(cmd)
+                else:
+                    name = 'OP_[{}]'.format(cmd)
+                result.append(name)
+            else:
+                result.append(cmd.hex())
+        return ' '.join(result)
 
     def raw_serialize(self):
         result = b''
@@ -123,6 +136,14 @@ class Script:
             raise SyntaxError('parsing script failed')
         
         return cls(cmds)
+    
+    def serialize(self):
+        # get the raw serialization (no prepended length)
+        result = self.raw_serialize()
+        # get the length of the whole thing
+        total = len(result)
+        # encode_varint the total length of the result and prepend
+        return encode_varint(total) + result
     
 def p2pkh_script(h160):
     '''Takes a hash160 and returns the p2pkh ScriptPubKey''' 

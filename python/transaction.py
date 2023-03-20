@@ -1,5 +1,6 @@
 from io import BytesIO
 from urllib import request
+from script import Script
 from serialization import hash256
 from helper import little_endian_to_int, int_to_little_endian, encode_varint, read_varint, SIGHASH_ALL
 
@@ -109,7 +110,7 @@ class TxIn:
         self.prev_tx = prev_tx
         self.prev_index = prev_index
         if script_sig is None:
-            script_sig = Script()
+            self.script_sig = Script()
         else:
             self.script_sig = script_sig
         self.sequence = sequence
@@ -160,7 +161,7 @@ class TxOut:
     
     def serialize(self):
         '''Returns the byte serialization of the transaction output'''
-        result = int_to_little_endian(self.amout, 8)
+        result = int_to_little_endian(self.amount, 8)
         result += self.script_pubkey.serialize()
         return result
     

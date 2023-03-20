@@ -1,11 +1,11 @@
 from io import BytesIO
 from finite_fields import FieldElement
-from transaction import Tx
+from transaction import Tx, TxIn, TxOut
 from secp256k1 import S256Point, PrivateKey
 from point import Point
 from signature import Signature
-from serialization import endoe_base58
-from script import Script
+from serialization import endoe_base58, decode_base58
+from script import Script, p2pkh_script
 
 prime = 2**256 - 2**32 - 977
 a = FieldElement(0 , prime)
@@ -111,7 +111,25 @@ print(combined_script.evaluate(0))
 '''
 
 # --------
-raw_tx = ('0100000001813f79011acb80925dfe69b3def355fe914bd1d96a3f5f71bf830\ 3c6a989c7d1000000006b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccf\ cf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8\ e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278\ afeffffff02a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88a\ c99c39800000000001976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac19430600')
-stream = BytesIO(bytes.fromhex(raw_tx))
-transaction = Tx.parse(stream)
-print(transaction.fee() >= 0)
+# raw_tx = ('0100000001813f79011acb80925dfe69b3def355fe914bd1d96a3f5f71bf830\ 3c6a989c7d1000000006b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccf\ cf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8\ e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278\ afeffffff02a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88a\ c99c39800000000001976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac19430600')
+# stream = BytesIO(bytes.fromhex(raw_tx))
+# transaction = Tx.parse(stream)
+# print(transaction.fee() >= 0)
+
+prev_tx = bytes.fromhex('0d6fe5213c0b3291f208cba8bfb59b7476dffacc4e5cb66f6eb20a080843a299')
+prev_index = 13
+tx_in = TxIn(prev_tx, prev_index)
+tx_outs = []
+
+change_amount = int(0.33*100000000)
+change_h160 = decode_base58('mzx5YhAH9kNHtcN481u6WkjeHjYtVeKVh2')
+change_script = p2pkh_script(change_h160)
+change_output = TxOut(amount=change_amount, script_pubkey=change_script)
+
+target_amount = int(0.1*100000000)
+target_h160 = decode_base58('mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf')
+target_script = p2pkh_script(target_h160)
+target_output = TxOut(amount=target_amount, script_pubkey=target_script)
+
+tx_obj = Tx(1, [tx_in], [change_output, target_output], 0, True)
+print(tx_obj)

@@ -30,9 +30,9 @@ def encode_base58_checksum(b):
 def decode_base58(s):
     '''Decode a Base58 string into an integer'''
     # Convert the string to an integer
-    n = 0
+    num = 0
     for c in s:
-        n *= 58
+        num *= 58
         num += BASE58_ALPHABET.index(c)
     combined = num.to_bytes(25, byteorder='big')
     checksum = combined[-4:]
